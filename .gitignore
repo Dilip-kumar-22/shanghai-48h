@@ -3,6 +3,7 @@ dist/
 src/assets/generated/
 test-results/
 playwright-report/
+lighthouse-report/
 *.log
 *.tsbuildinfo
 .DS_Store

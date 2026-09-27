@@ -28,6 +28,7 @@
     "eslint.config.js",
     "stylelint.config.js",
     "build",
+    "scripts",
     "tests"
   ]
 }
