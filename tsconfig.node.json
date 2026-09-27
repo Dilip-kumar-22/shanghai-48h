@@ -22,5 +22,12 @@
     "noUnusedParameters": true,
     "skipLibCheck": true
   },
-  "include": ["vite.config.ts", "eslint.config.js", "stylelint.config.js", "build"]
+  "include": [
+    "vite.config.ts",
+    "playwright.config.ts",
+    "eslint.config.js",
+    "stylelint.config.js",
+    "build",
+    "tests"
+  ]
 }

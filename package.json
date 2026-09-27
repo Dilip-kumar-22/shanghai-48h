@@ -16,7 +16,10 @@
     "lint:js": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\" \"public/**/*.css\"",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "playwright test",
+    "test:e2e": "playwright test --grep-invert @a11y",
+    "test:a11y": "playwright test --grep @a11y"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -24,7 +27,9 @@
     "lenis": "^1.3.26"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.19.0",
     "eslint": "^10.11.0",
     "globals": "^17.12.0",

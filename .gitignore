@@ -1,6 +1,8 @@
 node_modules/
 dist/
 src/assets/generated/
+test-results/
+playwright-report/
 *.log
 *.tsbuildinfo
 .DS_Store
