@@ -1,177 +1,365 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>48 Hours in Shanghai - an immersive scroll</title>
-  <meta name="description" content="An immersive, scroll-through cinematic journey across Shanghai - the Bund, neon Nanjing Road, futuristic Pudong, old-city alleys and Yu Garden." />
-  <meta name="color-scheme" content="dark" />
-  <meta property="og:title" content="48 Hours in Shanghai" />
-  <meta property="og:description" content="Scroll through neon avenues, the Bund, and futuristic Pudong." />
-  <meta property="og:image" content="./assets/hero.jpg" />
-  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
-  <link rel="preload" as="image" href="./assets/hero.jpg" fetchpriority="high" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles/main.css" />
-  <script type="importmap">
-    { "imports": { "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.mjs" } }
-  </script>
-</head>
-<body>
-  <a class="skip-link" href="#bund">Skip to content</a>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>48 Hours in Shanghai - an immersive scroll</title>
+    <meta
+      name="description"
+      content="An immersive, scroll-through cinematic journey across Shanghai - the Bund, neon Nanjing Road, futuristic Pudong, old-city alleys and Yu Garden."
+    />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#07080c" />
+    <link rel="canonical" href="__SITE_URL__" />
 
-  <!-- cinematic preloader -->
-  <div class="loader" id="loader" aria-hidden="true">
-    <div class="loader__inner">
-      <span class="loader__word">SHANGHAI</span>
-      <span class="loader__pct"><b id="loader-pct">0</b>%</span>
-      <span class="loader__bar"><i id="loader-bar"></i></span>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="48 Hours in Shanghai" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="__SITE_URL__" />
+    <meta property="og:title" content="48 Hours in Shanghai" />
+    <meta property="og:description" content="Scroll through neon avenues, the Bund, and futuristic Pudong." />
+    <meta property="og:image" content="__SITE_URL__og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The Lujiazui skyline and the Oriental Pearl Tower across the Huangpu River at dusk"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image:alt"
+      content="The Lujiazui skyline and the Oriental Pearl Tower across the Huangpu River at dusk"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": "48 Hours in Shanghai",
+        "description": "An immersive, scroll-through cinematic journey across Shanghai - the Bund, neon Nanjing Road, futuristic Pudong, old-city alleys and Yu Garden.",
+        "url": "__SITE_URL__",
+        "image": "__SITE_URL__og-image.jpg",
+        "inLanguage": "en",
+        "datePublished": "2026-06-04",
+        "about": { "@type": "City", "name": "Shanghai" }
+      }
+    </script>
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <noscript><link rel="stylesheet" href="/noscript.css" /></noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- cinematic preloader: shown by CSS, removed by the script or by a CSS failsafe -->
+    <div class="loader" id="loader" aria-hidden="true">
+      <div class="loader__inner">
+        <span class="loader__word">SHANGHAI</span>
+        <span class="loader__pct"><b id="loader-pct">0</b>%</span>
+        <span class="loader__bar"><i id="loader-bar"></i></span>
+      </div>
     </div>
-  </div>
 
-  <!-- cinematic overlays -->
-  <div class="grade" aria-hidden="true"></div>
-  <div class="vignette" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+    <!-- cinematic overlays -->
+    <div class="grade" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
 
-  <!-- sound toggle -->
-  <button class="sound" id="sound" aria-pressed="false" aria-label="Toggle ambient sound" title="Ambient sound">
-    <span class="sound__bars"><i></i><i></i><i></i><i></i></span>
-    <span class="sound__label">Sound</span>
-  </button>
+    <!-- sound toggle: revealed by the script only when Web Audio is available -->
+    <button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Ambient sound" hidden>
+      <span class="sound__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="sound__label">Sound</span>
+    </button>
 
-  <!-- film-style chapter HUD -->
-  <aside class="hud" aria-hidden="true">
-    <span class="hud__count"><b id="hud-no">00</b> / 06</span>
-    <span class="hud__place" id="hud-place">Shanghai</span>
-    <span class="hud__time" id="hud-time">48 hours</span>
-  </aside>
+    <!-- film-style chapter HUD -->
+    <aside class="hud" aria-hidden="true">
+      <span class="hud__count"><b id="hud-no">00</b> / 06</span>
+      <span class="hud__place" id="hud-place">Shanghai</span>
+      <span class="hud__time" id="hud-time">48 hours</span>
+    </aside>
 
-  <!-- journey trail -->
-  <nav class="trail" aria-label="Journey">
-    <span class="trail__rail"><span class="trail__fill" id="trail-fill"></span></span>
-    <a class="trail__dot" href="#bund" data-i="1"><span class="trail__label">The Bund</span></a>
-    <a class="trail__dot" href="#nanjing" data-i="2"><span class="trail__label">Nanjing Rd</span></a>
-    <a class="trail__dot" href="#pudong" data-i="3"><span class="trail__label">Lujiazui</span></a>
-    <a class="trail__dot" href="#alley" data-i="4"><span class="trail__label">Old City</span></a>
-    <a class="trail__dot" href="#garden" data-i="5"><span class="trail__label">Yu Garden</span></a>
-    <a class="trail__dot" href="#food" data-i="6"><span class="trail__label">Night Market</span></a>
-  </nav>
+    <!-- journey trail: vertical on wide screens, a top rail on narrow ones -->
+    <nav class="trail" aria-label="Chapters">
+      <span class="trail__rail" aria-hidden="true"><span class="trail__fill" id="trail-fill"></span></span>
+      <a class="trail__dot" href="#bund"><span class="trail__label">The Bund</span></a>
+      <a class="trail__dot" href="#nanjing"><span class="trail__label">Nanjing Rd</span></a>
+      <a class="trail__dot" href="#pudong"><span class="trail__label">Lujiazui</span></a>
+      <a class="trail__dot" href="#alley"><span class="trail__label">Old City</span></a>
+      <a class="trail__dot" href="#garden"><span class="trail__label">Yu Garden</span></a>
+      <a class="trail__dot" href="#food"><span class="trail__label">Night Market</span></a>
+    </nav>
 
-  <!-- INTRO -->
-  <header class="intro" id="top">
-    <div class="chapter__bg" data-parallax><img src="./assets/hero.jpg" alt="" fetchpriority="high" /></div>
-    <div class="intro__scrim" aria-hidden="true"></div>
-    <div class="intro__inner">
-      <p class="eyebrow on-load">An immersive scroll</p>
-      <h1 class="intro__title"><span class="kinetic on-load" style="--i:0">48 Hours</span><span class="kinetic on-load accent" style="--i:1">in Shanghai</span></h1>
-      <p class="intro__sub on-load" style="--i:2">A cinematic journey through neon avenues, the Bund at dusk, futuristic Pudong, lantern-lit alleys and quiet gardens.</p>
-    </div>
-    <div class="scroll-cue on-load" style="--i:3" aria-hidden="true"><span>Begin the journey</span><span class="scroll-cue__line"></span></div>
-  </header>
-
-  <main>
-    <!-- 01 THE BUND -->
-    <section class="chapter" id="bund" data-no="01" data-place="The Bund" data-time="Day 1 - 18:00">
-      <div class="chapter__sticky">
-        <div class="chapter__bg" data-parallax><img src="./assets/bund.jpg" alt="The Bund waterfront and Pudong skyline at night" decoding="async" /></div>
-        <div class="chapter__scrim" aria-hidden="true"></div>
-        <div class="chapter__inner">
-          <p class="chapter__meta"><span class="chapter__no">01</span><span class="chapter__place">The Bund</span><span class="chapter__time">Day 1 - 18:00</span></p>
-          <h2 class="chapter__title kinetic">Where the river splits time.</h2>
-          <p class="chapter__text reveal">On one bank, a century of colonial stone. On the other, a skyline that looks borrowed from the future. As the lamps come on along the Huangpu, Shanghai shows you both at once.</p>
-          <p class="chapter__tip reveal"><span class="pin"></span>Arrive at blue hour - both banks ignite at 18:00.</p>
-        </div>
+    <!-- INTRO -->
+    <header class="intro" id="top" tabindex="-1">
+      <div class="chapter__bg" data-parallax>
+        <img data-picture="hero" alt="" fetchpriority="high" decoding="async" />
       </div>
-    </section>
-
-    <!-- 02 NANJING ROAD -->
-    <section class="chapter" id="nanjing" data-no="02" data-place="Nanjing Road" data-time="Day 1 - 21:00">
-      <div class="chapter__sticky">
-        <div class="chapter__bg" data-parallax><img src="./assets/nanjing.jpg" alt="Neon-lit Nanjing Road at night" loading="lazy" decoding="async" /></div>
-        <div class="chapter__scrim" aria-hidden="true"></div>
-        <div class="chapter__inner">
-          <p class="chapter__meta"><span class="chapter__no">02</span><span class="chapter__place">Nanjing Road</span><span class="chapter__time">Day 1 - 21:00</span></p>
-          <h2 class="chapter__title kinetic">A river of neon.</h2>
-          <p class="chapter__text reveal">Step into the current. A mile of signs in a dozen scripts, the crowd moving like water, and the whole street reflected, doubled and glowing, in the rain on the pavement.</p>
-          <p class="chapter__tip reveal"><span class="pin"></span>Walk it east, toward the Bund, and let it pull you to the river.</p>
-        </div>
+      <div class="intro__scrim" aria-hidden="true"></div>
+      <div class="intro__inner">
+        <p class="eyebrow on-load">An immersive scroll</p>
+        <h1 class="intro__title">
+          <span class="kinetic on-load">48 Hours</span>
+          <span class="kinetic on-load accent stagger-1">in Shanghai</span>
+        </h1>
+        <p class="intro__sub on-load stagger-2">
+          A cinematic journey through neon avenues, the Bund at dusk, futuristic Pudong, lantern-lit alleys
+          and quiet gardens.
+        </p>
       </div>
-    </section>
-
-    <!-- 03 PUDONG -->
-    <section class="chapter" id="pudong" data-no="03" data-place="Lujiazui" data-time="Day 1 - 23:00">
-      <div class="chapter__sticky">
-        <div class="chapter__bg" data-parallax><img src="./assets/pudong.jpg" alt="Pudong Lujiazui skyscrapers at night" loading="lazy" decoding="async" /></div>
-        <div class="chapter__scrim" aria-hidden="true"></div>
-        <div class="chapter__inner">
-          <p class="chapter__meta"><span class="chapter__no">03</span><span class="chapter__place">Lujiazui</span><span class="chapter__time">Day 1 - 23:00</span></p>
-          <h2 class="chapter__title kinetic">Tomorrow, built tall.</h2>
-          <p class="chapter__text reveal">Crane your neck. The Pearl, the Tower, the Bottle-opener - a skyline that grew a thousand feet in a single generation, humming with light long after midnight.</p>
-          <p class="chapter__tip reveal"><span class="pin"></span>The Shanghai Tower deck, floor 118 - the highest view in the city.</p>
-        </div>
+      <div class="scroll-cue on-load stagger-3" aria-hidden="true">
+        <span>Begin the journey</span><span class="scroll-cue__line"></span>
       </div>
-    </section>
+    </header>
 
-    <!-- 04 OLD CITY -->
-    <section class="chapter" id="alley" data-no="04" data-place="Old City" data-time="Day 2 - 08:00">
-      <div class="chapter__sticky">
-        <div class="chapter__bg" data-parallax><img src="./assets/alley.jpg" alt="A lantern-lit old-city alley with street food steam" loading="lazy" decoding="async" /></div>
-        <div class="chapter__scrim" aria-hidden="true"></div>
-        <div class="chapter__inner">
-          <p class="chapter__meta"><span class="chapter__no">04</span><span class="chapter__place">Old City</span><span class="chapter__time">Day 2 - 08:00</span></p>
-          <h2 class="chapter__title kinetic">Lanterns and steam.</h2>
-          <p class="chapter__text reveal">Slip off the boulevard into the lanes. Red lanterns overhead, breakfast woks below, and a quiet that the skyscrapers never quite reach.</p>
-          <p class="chapter__tip reveal"><span class="pin"></span>Breakfast like a local - scallion pancakes (cong you bing), hot off the iron.</p>
+    <main id="main" tabindex="-1">
+      <!-- 01 THE BUND -->
+      <section
+        class="chapter"
+        id="bund"
+        tabindex="-1"
+        aria-labelledby="bund-title"
+        data-no="01"
+        data-place="The Bund"
+        data-time="Day 1 - 18:00"
+      >
+        <div class="chapter__sticky">
+          <div class="chapter__bg" data-parallax>
+            <img
+              data-picture="bund"
+              alt="The Bund waterfront and Pudong skyline at night"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="chapter__scrim" aria-hidden="true"></div>
+          <div class="chapter__inner">
+            <p class="chapter__meta">
+              <span class="chapter__no">01</span><span class="chapter__place">The Bund</span
+              ><span class="chapter__time">Day 1 - 18:00</span>
+            </p>
+            <h2 class="chapter__title kinetic" id="bund-title">Where the river splits time.</h2>
+            <p class="chapter__text reveal">
+              On one bank, a century of colonial stone. On the other, a skyline that looks borrowed from the
+              future. As the lamps come on along the Huangpu, Shanghai shows you both at once.
+            </p>
+            <p class="chapter__tip reveal">
+              <span class="pin"></span>Arrive at blue hour - both banks ignite at 18:00.
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 05 YU GARDEN -->
-    <section class="chapter" id="garden" data-no="05" data-place="Yu Garden" data-time="Day 2 - 11:00">
-      <div class="chapter__sticky">
-        <div class="chapter__bg" data-parallax><img src="./assets/garden.jpg" alt="Yu Garden classical pavilion reflected in a pond" loading="lazy" decoding="async" /></div>
-        <div class="chapter__scrim" aria-hidden="true"></div>
-        <div class="chapter__inner">
-          <p class="chapter__meta"><span class="chapter__no">05</span><span class="chapter__place">Yu Garden</span><span class="chapter__time">Day 2 - 11:00</span></p>
-          <h2 class="chapter__title kinetic">Stillness, by design.</h2>
-          <p class="chapter__text reveal">Four hundred years old and built to slow you down - curved roofs, carp-dark water, a pavilion mirrored so perfectly you forget which way is up.</p>
-          <p class="chapter__tip reveal"><span class="pin"></span>Go at opening - beat the tour groups to the rockery and the koi.</p>
+      <!-- 02 NANJING ROAD -->
+      <section
+        class="chapter"
+        id="nanjing"
+        tabindex="-1"
+        aria-labelledby="nanjing-title"
+        data-no="02"
+        data-place="Nanjing Road"
+        data-time="Day 1 - 21:00"
+      >
+        <div class="chapter__sticky">
+          <div class="chapter__bg" data-parallax>
+            <img
+              data-picture="nanjing"
+              alt="Neon-lit Nanjing Road at night"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="chapter__scrim" aria-hidden="true"></div>
+          <div class="chapter__inner">
+            <p class="chapter__meta">
+              <span class="chapter__no">02</span><span class="chapter__place">Nanjing Road</span
+              ><span class="chapter__time">Day 1 - 21:00</span>
+            </p>
+            <h2 class="chapter__title kinetic" id="nanjing-title">A river of neon.</h2>
+            <p class="chapter__text reveal">
+              Step into the current. A mile of signs in a dozen scripts, the crowd moving like water, and the
+              whole street reflected, doubled and glowing, in the rain on the pavement.
+            </p>
+            <p class="chapter__tip reveal">
+              <span class="pin"></span>Walk it east, toward the Bund, and let it pull you to the river.
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 06 NIGHT MARKET -->
-    <section class="chapter" id="food" data-no="06" data-place="Night Market" data-time="Day 2 - 20:00">
-      <div class="chapter__sticky">
-        <div class="chapter__bg" data-parallax><img src="./assets/food.jpg" alt="Steaming soup dumplings at a night-market stall" loading="lazy" decoding="async" /></div>
-        <div class="chapter__scrim" aria-hidden="true"></div>
-        <div class="chapter__inner">
-          <p class="chapter__meta"><span class="chapter__no">06</span><span class="chapter__place">Night Market</span><span class="chapter__time">Day 2 - 20:00</span></p>
-          <h2 class="chapter__title kinetic">Soup dumplings at midnight.</h2>
-          <p class="chapter__text reveal">End where every good day in Shanghai ends - over a bamboo basket of xiao long bao, steam on your glasses, neon at your back.</p>
-          <p class="chapter__tip reveal"><span class="pin"></span>Xiao long bao the way it was invented - Nanxiang, since 1900.</p>
+      <!-- 03 PUDONG -->
+      <section
+        class="chapter"
+        id="pudong"
+        tabindex="-1"
+        aria-labelledby="pudong-title"
+        data-no="03"
+        data-place="Lujiazui"
+        data-time="Day 1 - 23:00"
+      >
+        <div class="chapter__sticky">
+          <div class="chapter__bg" data-parallax>
+            <img
+              data-picture="pudong"
+              alt="Pudong Lujiazui skyscrapers at night"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="chapter__scrim" aria-hidden="true"></div>
+          <div class="chapter__inner">
+            <p class="chapter__meta">
+              <span class="chapter__no">03</span><span class="chapter__place">Lujiazui</span
+              ><span class="chapter__time">Day 1 - 23:00</span>
+            </p>
+            <h2 class="chapter__title kinetic" id="pudong-title">Tomorrow, built tall.</h2>
+            <p class="chapter__text reveal">
+              Crane your neck. The Pearl, the Tower, the Bottle-opener - a skyline that grew a thousand feet
+              in a single generation, humming with light long after midnight.
+            </p>
+            <p class="chapter__tip reveal">
+              <span class="pin"></span>The Shanghai Tower deck, floor 118 - the highest view in the city.
+            </p>
+          </div>
         </div>
+      </section>
+
+      <!-- 04 OLD CITY -->
+      <section
+        class="chapter"
+        id="alley"
+        tabindex="-1"
+        aria-labelledby="alley-title"
+        data-no="04"
+        data-place="Old City"
+        data-time="Day 2 - 08:00"
+      >
+        <div class="chapter__sticky">
+          <div class="chapter__bg" data-parallax>
+            <img
+              data-picture="alley"
+              alt="A lantern-lit old-city alley with street food steam"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="chapter__scrim" aria-hidden="true"></div>
+          <div class="chapter__inner">
+            <p class="chapter__meta">
+              <span class="chapter__no">04</span><span class="chapter__place">Old City</span
+              ><span class="chapter__time">Day 2 - 08:00</span>
+            </p>
+            <h2 class="chapter__title kinetic" id="alley-title">Lanterns and steam.</h2>
+            <p class="chapter__text reveal">
+              Slip off the boulevard into the lanes. Red lanterns overhead, breakfast woks below, and a quiet
+              that the skyscrapers never quite reach.
+            </p>
+            <p class="chapter__tip reveal">
+              <span class="pin"></span>Breakfast like a local - scallion pancakes (cong you bing), hot off the
+              iron.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 YU GARDEN -->
+      <section
+        class="chapter"
+        id="garden"
+        tabindex="-1"
+        aria-labelledby="garden-title"
+        data-no="05"
+        data-place="Yu Garden"
+        data-time="Day 2 - 11:00"
+      >
+        <div class="chapter__sticky">
+          <div class="chapter__bg" data-parallax>
+            <img
+              data-picture="garden"
+              alt="Yu Garden classical pavilion reflected in a pond"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="chapter__scrim" aria-hidden="true"></div>
+          <div class="chapter__inner">
+            <p class="chapter__meta">
+              <span class="chapter__no">05</span><span class="chapter__place">Yu Garden</span
+              ><span class="chapter__time">Day 2 - 11:00</span>
+            </p>
+            <h2 class="chapter__title kinetic" id="garden-title">Stillness, by design.</h2>
+            <p class="chapter__text reveal">
+              Four hundred years old and built to slow you down - curved roofs, carp-dark water, a pavilion
+              mirrored so perfectly you forget which way is up.
+            </p>
+            <p class="chapter__tip reveal">
+              <span class="pin"></span>Go at opening - beat the tour groups to the rockery and the koi.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 NIGHT MARKET -->
+      <section
+        class="chapter"
+        id="food"
+        tabindex="-1"
+        aria-labelledby="food-title"
+        data-no="06"
+        data-place="Night Market"
+        data-time="Day 2 - 20:00"
+      >
+        <div class="chapter__sticky">
+          <div class="chapter__bg" data-parallax>
+            <img
+              data-picture="food"
+              alt="Steaming soup dumplings at a night-market stall"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="chapter__scrim" aria-hidden="true"></div>
+          <div class="chapter__inner">
+            <p class="chapter__meta">
+              <span class="chapter__no">06</span><span class="chapter__place">Night Market</span
+              ><span class="chapter__time">Day 2 - 20:00</span>
+            </p>
+            <h2 class="chapter__title kinetic" id="food-title">Soup dumplings at midnight.</h2>
+            <p class="chapter__text reveal">
+              End where every good day in Shanghai ends - over a bamboo basket of xiao long bao, steam on your
+              glasses, neon at your back.
+            </p>
+            <p class="chapter__tip reveal">
+              <span class="pin"></span>Xiao long bao the way it was invented - Nanxiang, since 1900.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- OUTRO -->
+    <footer class="outro" id="end">
+      <div class="chapter__bg" data-parallax>
+        <img data-picture="outro" alt="" loading="lazy" decoding="async" />
       </div>
-    </section>
-  </main>
-
-  <!-- OUTRO -->
-  <footer class="outro" id="end">
-    <div class="chapter__bg" data-parallax><img src="./assets/outro.jpg" alt="" loading="lazy" decoding="async" /></div>
-    <div class="intro__scrim" aria-hidden="true"></div>
-    <div class="outro__inner">
-      <h2 class="outro__title kinetic">48 hours is never enough.</h2>
-      <p class="outro__sub reveal">The city keeps glowing long after you leave it.</p>
-      <a class="btn reveal" href="#top">Scroll it again</a>
-      <p class="outro__credit reveal">An immersive demo - cinematic imagery generated with AI, scroll-built end to end.</p>
-    </div>
-  </footer>
-
-  <noscript><style>.loader{display:none}.chapter__bg img{transform:none!important}.reveal,.on-load,.kinetic{opacity:1!important;transform:none!important;clip-path:none!important}</style></noscript>
-  <script type="module" src="./src/app.js"></script>
-</body>
+      <div class="intro__scrim" aria-hidden="true"></div>
+      <div class="outro__inner">
+        <h2 class="outro__title kinetic">48 hours is never enough.</h2>
+        <p class="outro__sub reveal">The city keeps glowing long after you leave it.</p>
+        <a class="btn reveal" href="#top">Scroll it again</a>
+        <p class="outro__credit reveal">
+          An immersive demo - cinematic imagery generated with AI, scroll-built end to end.
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>
