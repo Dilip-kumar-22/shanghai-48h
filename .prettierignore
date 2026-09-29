@@ -1,0 +1,6 @@
+dist/
+src/assets/generated/
+playwright-report/
+test-results/
+lighthouse-report/
+package-lock.json

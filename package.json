@@ -1,0 +1,47 @@
+{
+  "name": "shanghai-48h",
+  "version": "1.0.0",
+  "private": true,
+  "description": "48 Hours in Shanghai — an immersive, cinematic scroll story.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint .",
+    "lint:css": "stylelint \"src/**/*.css\" \"public/**/*.css\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "playwright test",
+    "test:e2e": "playwright test --grep-invert @a11y",
+    "test:a11y": "playwright test --grep @a11y",
+    "test:performance": "node scripts/lighthouse.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "lenis": "^1.3.26"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.19.0",
+    "chrome-launcher": "^1.2.1",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "lighthouse": "^13.5.0",
+    "prettier": "^3.9.9",
+    "sharp": "^0.35.5",
+    "stylelint": "^17.15.0",
+    "stylelint-config-standard": "^40.0.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vite": "^8.3.1"
+  }
+}

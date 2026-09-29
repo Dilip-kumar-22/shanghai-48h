@@ -1,0 +1,4 @@
+/* Without JavaScript nothing removes the preloader, so never show it. */
+.loader {
+  display: none;
+}
