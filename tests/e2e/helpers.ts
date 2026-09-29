@@ -41,14 +41,30 @@ export function activeElementId(page: Page) {
   return page.evaluate(() => document.activeElement?.id ?? '');
 }
 
+const SCENE_IMAGE = /\/assets\/[a-z]+-p?\d+-[\w-]+\.(avif|webp|jpg)$/;
+
+/**
+ * Holds every scene image response open, so no image completes and the page's own
+ * loading decisions stay observable whatever the browser's lazy-load distance.
+ */
+export async function stallSceneImages(page: Page) {
+  await page.route(SCENE_IMAGE, () => undefined);
+}
+
+/** Ids of the scenes whose image is not left to lazy loading, in story order. */
+export function eagerScenes(page: Page) {
+  return page.evaluate(() =>
+    [...document.querySelectorAll<HTMLImageElement>('.chapter__bg img')]
+      .filter((image) => image.loading !== 'lazy')
+      .map((image) => image.closest('[id]')?.id ?? ''),
+  );
+}
+
 /** Scene image requests (hashed build assets), excluding icons and fonts. */
 export function sceneImageRequests(page: Page) {
   const urls: string[] = [];
   page.on('request', (request) => {
-    if (
-      request.resourceType() === 'image' &&
-      /\/assets\/[a-z]+-p?\d+-[\w-]+\.(avif|webp|jpg)$/.test(request.url())
-    ) {
+    if (request.resourceType() === 'image' && SCENE_IMAGE.test(request.url())) {
       urls.push(new URL(request.url()).pathname.split('/').pop() ?? '');
     }
   });

@@ -2,8 +2,10 @@ import { expect, test } from '@playwright/test';
 import {
   CHAPTERS,
   activeElementId,
+  eagerScenes,
   loaderGone,
   sceneImageRequests,
+  stallSceneImages,
   viewportTop,
   watchForProblems,
 } from './helpers';
@@ -23,22 +25,32 @@ test.describe('loading', () => {
     expect(problems).toEqual([]);
   });
 
-  test('requests only the first scene and the next one up front', async ({ page }) => {
+  // How far ahead native lazy loading fetches is the browser's choice (Chromium 141 took
+  // one scene below the fold, 153 takes up to three), so the tests below pin down what the
+  // page itself does: it eagerly loads the first scene and the next one, nothing else.
+  test('eagerly loads only the first scene and the next one', async ({ page }) => {
+    await stallSceneImages(page);
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await loaderGone(page);
+    await expect.poll(() => eagerScenes(page)).toEqual(['top', 'bund']);
+  });
+
+  test('never requests the last scenes up front', async ({ page }) => {
     const images = sceneImageRequests(page);
     await page.goto('./');
     await loaderGone(page);
     await page.waitForTimeout(1500);
-    const scenes = new Set(images.map((file) => file.split('-')[0]));
-    expect(scenes.has('hero')).toBe(true);
-    expect(scenes.size).toBeLessThanOrEqual(2);
+    expect(images.some((file) => file.startsWith('hero-'))).toBe(true);
+    expect(images.filter((file) => /^(food|outro)-/.test(file))).toEqual([]);
     expect(images.every((file) => file.endsWith('.avif'))).toBe(true);
   });
 
   test('warms the scene after the active chapter', async ({ page }) => {
-    const images = sceneImageRequests(page);
-    await page.goto('./#pudong');
+    await stallSceneImages(page);
+    await page.goto('./#pudong', { waitUntil: 'domcontentloaded' });
     await loaderGone(page);
-    await expect.poll(() => images.some((file) => file.startsWith('alley-'))).toBe(true);
+    await expect.poll(() => eagerScenes(page)).toContain('alley');
+    expect(await eagerScenes(page)).not.toContain('garden');
   });
 });
 
