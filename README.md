@@ -76,8 +76,10 @@ tests/e2e/              Playwright functional and axe tests
 
 ## Performance
 
-- Only the first scene and the next one load up front. Later scenes lazy-load; as each chapter
-  becomes active the following scene is fetched and decoded ahead (skipped under Save-Data).
+- The page loads only the first scene and the next one eagerly; the rest use native lazy
+  loading, so how far ahead they are fetched is the browser's call (Chrome 153 fetches up to
+  three screens ahead, Chromium 141 one). As each chapter becomes active the following scene
+  is fetched and decoded ahead (skipped under Save-Data).
 - AVIF with WebP and JPEG fallbacks in several widths, never upscaled. Portrait screens get a
   centre crop of the same framing `object-fit: cover` shows, with far fewer pixels.
 - The preloader waits only for real milestones (script, fonts, first scene), at most 3 s.
@@ -87,15 +89,18 @@ tests/e2e/              Playwright functional and axe tests
   accessibility, best practices and SEO, CLS above 0.1 or performance below 70; warnings for
   performance below 90, LCP above 2.5 s and TBT above 200 ms.
 
-Measured against the original site under the same conditions (the after column spans two
-separate sessions):
+Measured against the original site under the same conditions. Chromium 141 was the local test
+browser; Chrome 153 is what CI runs:
 
-| Metric (Lighthouse mobile, median of 3) | Before  | After     |
-| --------------------------------------- | ------- | --------- |
-| Performance score                       | 77      | 98–99     |
-| Largest Contentful Paint                | 6.0 s   | 2.2–2.3 s |
-| Total transfer                          | 4.28 MB | 232 KB    |
-| Scene images requested before scrolling | all 8   | 2         |
+| Metric (Lighthouse mobile, median of 3) | Before  | After (Chromium 141) | After (Chrome 153) |
+| --------------------------------------- | ------- | -------------------- | ------------------ |
+| Performance score                       | 77      | 98–99                | 95–96              |
+| Largest Contentful Paint                | 6.0 s   | 2.2–2.3 s            | 2.6 s              |
+| Total transfer                          | 4.28 MB | 232 KB               | 477 KB             |
+| Scene images requested before scrolling | all 8   | 2                    | 4                  |
+
+Chrome 153's longer lazy-load distance fetches two more scenes during load; that shared bandwidth
+is what raises its LCP estimate.
 
 Details: [docs/remediation/BASELINE.md](docs/remediation/BASELINE.md) and
 [AUDIT_REMEDIATION_LEDGER.md](AUDIT_REMEDIATION_LEDGER.md).
